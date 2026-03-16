@@ -38,18 +38,17 @@
             pointer-events: auto;
         }
 
-        /* ===== ЗАЩИТНАЯ ПОДЛОЖКА ===== */
+        /* ===== ЗАЩИТНАЯ ПОДЛОЖКА (очень лёгкая) ===== */
         .underlay {
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(16px);
-            border-radius: 80px;
-            padding: 40px 30px;
-            border: 1px solid rgba(255,255,255,0.25);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 0 2px rgba(255,255,255,0.05) inset;
-            max-width: 900px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(6px);
+            border-radius: 60px;
+            padding: 30px 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+            max-width: 800px;
             width: fit-content;
-            margin: 0 auto 30px;
-            transition: 0.3s;
+            margin: 0 auto 20px;
         }
 
         h1 {
@@ -264,22 +263,18 @@
             color: black;
         }
 
-        /* ===== БАБОЧКИ (5 штук) ===== */
-        .butterfly {
+        /* ===== ЛЕТАЮЩИЕ ЗВЁЗДОЧКИ (2D, поверх всего) ===== */
+        .floating-star {
             position: fixed;
-            width: 40px;
-            height: 40px;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 15px white, 0 0 30px rgba(255,255,255,0.5);
+            z-index: 9999;
             pointer-events: none;
-            z-index: 999;
-            filter: grayscale(100%) drop-shadow(0 0 10px white);
-            transform-origin: center;
-            will-change: transform;
-        }
-        .butterfly svg {
-            width: 100%;
-            height: 100%;
-            fill: white;
-            opacity: 0.9;
+            opacity: 0.7;
+            filter: grayscale(100%);
         }
 
         /* планшет+ */
@@ -311,12 +306,8 @@
 <body>
     <div id="canvas-container"></div>
 
-    <!-- 5 бабочек -->
-    <div class="butterfly" id="butterfly1"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
-    <div class="butterfly" id="butterfly2"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
-    <div class="butterfly" id="butterfly3"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
-    <div class="butterfly" id="butterfly4"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
-    <div class="butterfly" id="butterfly5"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
+    <!-- 50 летающих звёздочек (будут добавлены через JS) -->
+    <div id="stars-container"></div>
 
     <!-- основной контент -->
     <div class="content">
@@ -368,7 +359,7 @@
         </div>
     </div>
 
-    <!-- Three.js и анимация бабочек -->
+    <!-- Three.js и анимация звёздочек -->
     <script type="importmap">
         {
             "imports": {
@@ -493,46 +484,43 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // ---------- 5 БАБОЧЕК ----------
-        const butterflies = [
-            document.getElementById('butterfly1'),
-            document.getElementById('butterfly2'),
-            document.getElementById('butterfly3'),
-            document.getElementById('butterfly4'),
-            document.getElementById('butterfly5')
-        ];
+        // ---------- 2D ЛЕТАЮЩИЕ ЗВЁЗДОЧКИ ----------
+        const starsContainer = document.getElementById('stars-container');
+        const starElements = [];
+        const starCount = 50;
 
-        const angles = [0, 2.1, 4.3, 1.8, 3.7];
-        const radii = [280, 350, 310, 400, 260];
-        const speeds = [0.012, 0.018, 0.009, 0.021, 0.015];
-        const centers = butterflies.map(() => ({
-            x: window.innerWidth / 2,
-            y: window.innerHeight / 2
-        }));
-
-        function updateButterflies() {
-            for (let i = 0; i < butterflies.length; i++) {
-                if (!butterflies[i]) continue;
-                angles[i] += speeds[i];
-                const x = centers[i].x + radii[i] * Math.cos(angles[i]);
-                const y = centers[i].y + radii[i] * Math.sin(angles[i] * 0.8 + i);
-                butterflies[i].style.transform = `translate(${x}px, ${y}px) rotate(${angles[i] * 10}deg)`;
-            }
-            requestAnimationFrame(updateButterflies);
-        }
-
-        function updateCenters() {
-            const w = window.innerWidth;
-            const h = window.innerHeight;
-            centers.forEach(c => {
-                c.x = w / 2;
-                c.y = h / 2;
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'floating-star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = (Math.random() * 10 + 3) + 'px';
+            star.style.height = star.style.width;
+            starsContainer.appendChild(star);
+            starElements.push({
+                element: star,
+                x: Math.random() * 100,
+                y: Math.random() * 100,
+                speedX: (Math.random() - 0.5) * 0.1,
+                speedY: (Math.random() - 0.5) * 0.1,
+                size: parseFloat(star.style.width)
             });
         }
 
-        window.addEventListener('resize', updateCenters);
-        updateCenters();
-        updateButterflies();
+        function moveStars() {
+            for (let s of starElements) {
+                s.x += s.speedX;
+                s.y += s.speedY;
+
+                if (s.x < 0 || s.x > 100) s.speedX *= -1;
+                if (s.y < 0 || s.y > 100) s.speedY *= -1;
+
+                s.element.style.left = s.x + '%';
+                s.element.style.top = s.y + '%';
+            }
+            requestAnimationFrame(moveStars);
+        }
+        moveStars();
     </script>
 
     <!-- Логика кнопок -->
