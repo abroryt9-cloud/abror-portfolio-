@@ -24,7 +24,7 @@
         }
         .content {
             position: relative;
-            z-index: 10;
+            z-index: 20;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -32,12 +32,26 @@
             min-height: 100vh;
             padding: 20px;
             text-align: center;
-            backdrop-filter: blur(1px);
             pointer-events: none;
         }
         .content * {
             pointer-events: auto;
         }
+
+        /* ===== ЗАЩИТНАЯ ПОДЛОЖКА ===== */
+        .underlay {
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(16px);
+            border-radius: 80px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 0 2px rgba(255,255,255,0.05) inset;
+            max-width: 900px;
+            width: fit-content;
+            margin: 0 auto 30px;
+            transition: 0.3s;
+        }
+
         h1 {
             font-size: clamp(3rem, 12vw, 5.5rem);
             margin: 0 0 10px;
@@ -45,42 +59,39 @@
             letter-spacing: 4px;
             text-transform: uppercase;
             animation: fadeInDown 1.2s cubic-bezier(0.2, 0.9, 0.3, 1);
-            text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3);
+            text-shadow: 0 0 20px white, 0 0 40px rgba(255,255,255,0.5);
             line-height: 1.1;
+            color: #fff;
         }
         .sub {
-            font-size: clamp(1rem, 4vw, 1.3rem);
+            font-size: clamp(1rem, 4vw, 1.4rem);
             letter-spacing: 6px;
-            margin-bottom: 30px;
-            opacity: 0.8;
+            margin-bottom: 20px;
             font-weight: 300;
             animation: fadeInUp 1.2s 0.2s both;
+            text-shadow: 0 0 15px white;
+            color: #eee;
         }
         .bio {
-            max-width: 600px;
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            max-width: 700px;
+            font-size: clamp(0.95rem, 3vw, 1.15rem);
             line-height: 1.7;
-            margin: 30px auto 40px;
-            padding: 0 20px;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            border-radius: 40px;
-            padding: 25px 30px;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 30px 40px -20px rgba(0,0,0,0.8);
-            animation: fadeInScale 1s 0.4s both;
-            width: 90%;
-            box-sizing: border-box;
+            margin: 10px auto 0;
+            padding: 0 10px;
+            color: #f0f0f0;
+            text-shadow: 0 0 10px black;
         }
+
         .button-group {
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 30px;
             animation: floatButtons 3s infinite alternate ease-in-out;
             width: 100%;
             max-width: 600px;
+            z-index: 25;
         }
         .btn {
             padding: 18px 45px;
@@ -93,7 +104,7 @@
             color: white;
             cursor: pointer;
             transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 10px 30px rgba(0,0,0,0.7);
             text-transform: uppercase;
             letter-spacing: 3px;
@@ -117,9 +128,9 @@
         }
         .btn:hover {
             transform: scale(1.15) translateY(-5px);
-            box-shadow: 0 30px 40px rgba(255,255,255,0.2);
+            box-shadow: 0 30px 40px rgba(255,255,255,0.3);
             border-color: white;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.15);
         }
         .btn:active {
             transform: scale(0.95) translateY(5px);
@@ -129,6 +140,7 @@
             background: rgba(0,0,0,0.7);
             border: 1px solid white;
         }
+
         @keyframes fadeInDown {
             0% { opacity: 0; transform: translateY(-80px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -136,10 +148,6 @@
         @keyframes fadeInUp {
             0% { opacity: 0; transform: translateY(80px); }
             100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
         }
         @keyframes floatButtons {
             0% { transform: translateY(0); }
@@ -256,7 +264,7 @@
             color: black;
         }
 
-        /* ===== БАБОЧКА ===== */
+        /* ===== БАБОЧКИ (5 штук) ===== */
         .butterfly {
             position: fixed;
             width: 40px;
@@ -284,7 +292,7 @@
         @media (max-width: 700px) {
             h1 { font-size: 2.5rem; letter-spacing: 2px; }
             .sub { font-size: 0.9rem; letter-spacing: 3px; }
-            .bio { font-size: 0.9rem; padding: 20px 15px; margin: 15px auto; }
+            .bio { font-size: 0.9rem; padding: 0; }
             .button-group { gap: 15px; }
             .btn { 
                 padding: 14px 20px; 
@@ -292,6 +300,7 @@
                 min-width: 150px;
                 letter-spacing: 2px;
             }
+            .underlay { padding: 25px 20px; border-radius: 40px; }
             .portfolio-grid { grid-template-columns: 1fr; }
             .portfolio-panel { padding: 20px 15px; }
             .project-card { padding: 20px; }
@@ -302,25 +311,24 @@
 <body>
     <div id="canvas-container"></div>
 
-    <!-- бабочка -->
-    <div class="butterfly" id="butterfly">
-        <svg viewBox="0 0 100 100">
-            <path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/>
-            <circle cx="35" cy="35" r="4" fill="white"/>
-            <circle cx="65" cy="35" r="4" fill="white"/>
-            <path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/>
-        </svg>
-    </div>
+    <!-- 5 бабочек -->
+    <div class="butterfly" id="butterfly1"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
+    <div class="butterfly" id="butterfly2"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
+    <div class="butterfly" id="butterfly3"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
+    <div class="butterfly" id="butterfly4"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
+    <div class="butterfly" id="butterfly5"><svg viewBox="0 0 100 100"><path d="M50,20 C30,10 10,30 20,50 C30,70 50,80 50,80 C50,80 70,70 80,50 C90,30 70,10 50,20 Z" stroke="white" stroke-width="2" fill="none"/><circle cx="35" cy="35" r="4" fill="white"/><circle cx="65" cy="35" r="4" fill="white"/><path d="M45 55 Q50 70 55 55" stroke="white" stroke-width="3" fill="none"/></svg></div>
 
     <!-- основной контент -->
     <div class="content">
-        <h1>АБРОР</h1>
-        <div class="sub">РАЗРАБОТЧИК · АВТОМАТИЗАЦИЯ · БУДУЩЕЕ</div>
-        <div class="bio">
-            Я создаю умные системы, которые работают за людей.<br>
-            Telegram‑боты, n8n, интеграции, контент‑фермы, AI‑решения.<br>
-            Мой код автоматизирует сложные процессы и приносит результат.<br>
-            Живу в мире, где технологии решают настоящие задачи.
+        <div class="underlay">
+            <h1>АБРОР</h1>
+            <div class="sub">РАЗРАБОТЧИК · АВТОМАТИЗАЦИЯ · БУДУЩЕЕ</div>
+            <div class="bio">
+                Я создаю умные системы, которые работают за людей.<br>
+                Telegram‑боты, n8n, интеграции, контент‑фермы, AI‑решения.<br>
+                Мой код автоматизирует сложные процессы и приносит результат.<br>
+                Живу в мире, где технологии решают настоящие задачи.
+            </div>
         </div>
         <div class="button-group">
             <button class="btn telegram" id="tgBtn">TELEGRAM</button>
@@ -354,13 +362,13 @@
             </div>
             <div class="project-card">
                 <h3>Прокси‑бот</h3>
-                <p>Telegram‑бот для мониторинга прокси с уведомлениями.</p>
+                <p>Telegram‑bot для мониторинга прокси с уведомлениями.</p>
                 <a href="https://t.me/твой_бот" target="_blank" class="project-link">📎 Telegram</a>
             </div>
         </div>
     </div>
 
-    <!-- Three.js и анимация бабочки -->
+    <!-- Three.js и анимация бабочек -->
     <script type="importmap">
         {
             "imports": {
@@ -421,7 +429,7 @@
         const stars = new THREE.Points(starsGeo, starsMat);
         scene.add(stars);
 
-        // Летающие объекты (3D)
+        // Летающие объекты
         const floaters = [];
         for (let i = 0; i < 50; i++) {
             const size = Math.random() * 0.4 + 0.1;
@@ -485,32 +493,49 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // ---------- БАБОЧКА ----------
-        const butterfly = document.getElementById('butterfly');
-        let angle = 0;
-        const radius = 300;
-        let centerX = window.innerWidth / 2;
-        let centerY = window.innerHeight / 2;
+        // ---------- 5 БАБОЧЕК ----------
+        const butterflies = [
+            document.getElementById('butterfly1'),
+            document.getElementById('butterfly2'),
+            document.getElementById('butterfly3'),
+            document.getElementById('butterfly4'),
+            document.getElementById('butterfly5')
+        ];
 
-        function updateButterfly() {
-            angle += 0.01;
-            const x = centerX + radius * Math.cos(angle);
-            const y = centerY + radius * Math.sin(angle * 0.8);
-            butterfly.style.transform = `translate(${x}px, ${y}px) rotate(${angle * 10}deg)`;
-            requestAnimationFrame(updateButterfly);
+        const angles = [0, 2.1, 4.3, 1.8, 3.7];
+        const radii = [280, 350, 310, 400, 260];
+        const speeds = [0.012, 0.018, 0.009, 0.021, 0.015];
+        const centers = butterflies.map(() => ({
+            x: window.innerWidth / 2,
+            y: window.innerHeight / 2
+        }));
+
+        function updateButterflies() {
+            for (let i = 0; i < butterflies.length; i++) {
+                if (!butterflies[i]) continue;
+                angles[i] += speeds[i];
+                const x = centers[i].x + radii[i] * Math.cos(angles[i]);
+                const y = centers[i].y + radii[i] * Math.sin(angles[i] * 0.8 + i);
+                butterflies[i].style.transform = `translate(${x}px, ${y}px) rotate(${angles[i] * 10}deg)`;
+            }
+            requestAnimationFrame(updateButterflies);
         }
 
-        function updateCenter() {
-            centerX = window.innerWidth / 2;
-            centerY = window.innerHeight / 2;
+        function updateCenters() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            centers.forEach(c => {
+                c.x = w / 2;
+                c.y = h / 2;
+            });
         }
 
-        window.addEventListener('resize', updateCenter);
-        updateCenter();
-        updateButterfly();
+        window.addEventListener('resize', updateCenters);
+        updateCenters();
+        updateButterflies();
     </script>
 
-    <!-- Логика кнопок (без alert) -->
+    <!-- Логика кнопок -->
     <script>
         (function() {
             const tgBtn = document.getElementById('tgBtn');
@@ -540,13 +565,8 @@
                     }
                 });
 
-                // запрет закрытия при клике внутрь панели
-                panel.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
+                panel.addEventListener('click', (e) => e.stopPropagation());
             }
-
-            // ссылки внутри карточек работают как обычно
         })();
     </script>
 </body>
