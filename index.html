@@ -38,7 +38,6 @@
             pointer-events: auto;
         }
 
-        /* ===== ЗАЩИТНАЯ ПОДЛОЖКА (очень лёгкая) ===== */
         .underlay {
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(6px);
@@ -263,7 +262,7 @@
             color: black;
         }
 
-        /* ===== ЛЕТАЮЩИЕ ЗВЁЗДОЧКИ (2D, поверх всего) ===== */
+        /* ===== ЛЕТАЮЩИЕ ЗВЁЗДОЧКИ ===== */
         .floating-star {
             position: fixed;
             width: 8px;
@@ -277,13 +276,39 @@
             filter: grayscale(100%);
         }
 
-        /* планшет+ */
+        .music-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-btn:hover {
+            transform: scale(1.15);
+            border-color: white;
+            background: black;
+            box-shadow: 0 0 30px white;
+        }
+
         @media (min-width: 701px) and (max-width: 1024px) {
             .btn { padding: 16px 30px; }
             .portfolio-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        /* телефон */
         @media (max-width: 700px) {
             h1 { font-size: 2.5rem; letter-spacing: 2px; }
             .sub { font-size: 0.9rem; letter-spacing: 3px; }
@@ -306,10 +331,18 @@
 <body>
     <div id="canvas-container"></div>
 
-    <!-- 50 летающих звёздочек (будут добавлены через JS) -->
     <div id="stars-container"></div>
 
-    <!-- основной контент -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <audio id="clickSound" preload="auto">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" type="audio/mpeg">
+    </audio>
+
+    <button id="musicToggle" class="music-btn">🔇</button>
+
     <div class="content">
         <div class="underlay">
             <h1>АБРОР</h1>
@@ -329,7 +362,6 @@
 
     <div style="position:fixed; bottom:20px; right:20px; z-index:99; color:#aaa; font-size:0.8rem;">⚡ abrortg_com</div>
 
-    <!-- ПОРТФОЛИО ПАНЕЛЬ -->
     <div class="portfolio-panel" id="portfolioPanel">
         <div class="portfolio-header">
             <span>📁 ПРОЕКТЫ</span>
@@ -359,7 +391,6 @@
         </div>
     </div>
 
-    <!-- Three.js и анимация звёздочек -->
     <script type="importmap">
         {
             "imports": {
@@ -371,7 +402,6 @@
     <script type="module">
         import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
 
-        // ---------- 3D СЦЕНА ----------
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x050505);
 
@@ -384,7 +414,6 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Свет
         const ambient = new THREE.AmbientLight(0x404040);
         scene.add(ambient);
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
@@ -394,7 +423,6 @@
         backLight.position.set(-3, -1, -5);
         scene.add(backLight);
 
-        // Луна
         const moonGeo = new THREE.SphereGeometry(2.2, 128, 128);
         const moonMat = new THREE.MeshStandardMaterial({
             color: 0xcccccc,
@@ -406,7 +434,6 @@
         moon.position.set(-2, 0.5, -6);
         scene.add(moon);
 
-        // Звёзды
         const starsGeo = new THREE.BufferGeometry();
         const starsCount = 4000;
         const starsPos = new Float32Array(starsCount * 3);
@@ -420,7 +447,6 @@
         const stars = new THREE.Points(starsGeo, starsMat);
         scene.add(stars);
 
-        // Летающие объекты
         const floaters = [];
         for (let i = 0; i < 50; i++) {
             const size = Math.random() * 0.4 + 0.1;
@@ -436,7 +462,6 @@
             floaters.push({ mesh, speed: Math.random() * 0.01 + 0.005, offset: Math.random() * 10 });
         }
 
-        // Тор
         const ringGeo = new THREE.TorusGeometry(3, 0.05, 16, 100);
         const ringMat = new THREE.MeshStandardMaterial({ color: 0x888888, emissive: 0x222222, wireframe: true });
         const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -445,7 +470,6 @@
         ring.rotation.y = 0.5;
         scene.add(ring);
 
-        // Малая луна
         const miniMoonGeo = new THREE.SphereGeometry(0.6, 32);
         const miniMoonMat = new THREE.MeshStandardMaterial({ color: 0x999999, emissive: 0x111111 });
         const miniMoon = new THREE.Mesh(miniMoonGeo, miniMoonMat);
@@ -469,7 +493,6 @@
                 f.mesh.rotation.y += 0.02;
             });
 
-            // камера плавает
             camera.position.x = Math.sin(time * 0.2) * 1.2;
             camera.position.y = 1 + Math.cos(time * 0.3) * 0.4;
             camera.lookAt(0, 0.5, -3);
@@ -484,7 +507,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // ---------- 2D ЛЕТАЮЩИЕ ЗВЁЗДОЧКИ ----------
         const starsContainer = document.getElementById('stars-container');
         const starElements = [];
         const starCount = 50;
@@ -523,16 +545,37 @@
         moveStars();
     </script>
 
-    <!-- Логика кнопок -->
     <script>
         (function() {
             const tgBtn = document.getElementById('tgBtn');
             const moreBtn = document.getElementById('moreBtn');
             const panel = document.getElementById('portfolioPanel');
             const closeBtn = document.getElementById('closePanel');
+            const clickSound = document.getElementById('clickSound');
+
+            function playClick() {
+                if (clickSound) {
+                    clickSound.currentTime = 0;
+                    clickSound.play().catch(e => console.log('click sound blocked'));
+                }
+            }
+
+            const music = document.getElementById('bgMusic');
+            const musicBtn = document.getElementById('musicToggle');
+
+            musicBtn.addEventListener('click', () => {
+                if (music.paused) {
+                    music.play();
+                    musicBtn.textContent = '🔊';
+                } else {
+                    music.pause();
+                    musicBtn.textContent = '🔇';
+                }
+            });
 
             if (tgBtn) {
-                tgBtn.addEventListener('click', () => {
+                tgBtn.addEventListener('click', (e) => {
+                    playClick();
                     window.open('https://t.me/Abrortg_com', '_blank');
                 });
             }
@@ -540,10 +583,12 @@
             if (moreBtn && panel && closeBtn) {
                 moreBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    playClick();
                     panel.classList.add('show');
                 });
 
                 closeBtn.addEventListener('click', () => {
+                    playClick();
                     panel.classList.remove('show');
                 });
 
