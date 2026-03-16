@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аброр • Космический Dev</title>
+    <title>Аброр · История и космос</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             color: white;
+            background: #000;
         }
-
-        /* 3D сцена */
         #canvas-container {
             position: fixed;
             top: 0;
@@ -20,9 +19,8 @@
             width: 100%;
             height: 100%;
             z-index: 0;
+            filter: grayscale(100%);
         }
-
-        /* Контент поверх */
         .content {
             position: relative;
             z-index: 10;
@@ -33,65 +31,72 @@
             min-height: 100vh;
             padding: 20px;
             text-align: center;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(1px);
             pointer-events: none;
         }
-
         .content * {
             pointer-events: auto;
         }
-
-        /* Главный ник */
         h1 {
-            font-size: clamp(2.2rem, 12vw, 5rem);
-            margin-bottom: 10px;
-            text-shadow: 
-                0 0 20px cyan,
-                0 0 40px blue,
-                0 0 80px purple;
-            letter-spacing: 4px;
-            animation: fadeInDown 1.5s ease-out;
+            font-size: clamp(3rem, 12vw, 5.5rem);
+            margin: 0 0 10px;
             font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            animation: fadeInDown 1.2s cubic-bezier(0.2, 0.9, 0.3, 1);
+            text-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.3);
         }
-
-        .subtitle {
-            font-size: clamp(1rem, 4vw, 1.5rem);
-            margin-bottom: 40px;
-            opacity: 0.9;
-            text-shadow: 0 0 10px white;
-            letter-spacing: 2px;
-            animation: fadeInUp 1.5s ease-out 0.3s both;
+        .sub {
+            font-size: 1.3rem;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+            opacity: 0.8;
+            font-weight: 300;
+            animation: fadeInUp 1.2s 0.2s both;
         }
-
-        /* Кнопки — 3D стиль */
-        .button-container {
+        .bio {
+            max-width: 600px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin: 30px auto 40px;
+            padding: 0 20px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 25px 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 30px 40px -20px rgba(0,0,0,0.8);
+            animation: fadeInScale 1s 0.4s both;
+            transform-origin: center;
+        }
+        .button-group {
             display: flex;
             gap: 30px;
             flex-wrap: wrap;
             justify-content: center;
-            animation: fadeInUp 1.5s ease-out 0.6s both;
+            margin-top: 20px;
+            animation: floatButtons 3s infinite alternate ease-in-out;
         }
-
         .btn {
-            padding: 16px 40px;
+            padding: 18px 45px;
             font-size: 1.2rem;
             font-weight: 600;
             border: none;
-            border-radius: 50px;
+            border-radius: 60px;
+            background: rgba(30,30,30,0.8);
+            backdrop-filter: blur(15px);
+            color: white;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.3);
-            backdrop-filter: blur(10px);
-            color: white;
-            transform-style: preserve-3d;
-            transform: perspective(500px) rotateX(0deg);
+            transform: scale(1);
+            will-change: transform, box-shadow;
         }
-
         .btn::before {
             content: '';
             position: absolute;
@@ -101,232 +106,221 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
             transition: left 0.5s;
+            z-index: 0;
         }
-
         .btn:hover {
-            transform: perspective(500px) rotateX(5deg) translateY(-5px) scale(1.05);
-            box-shadow: 0 20px 30px rgba(0,255,255,0.5);
-            border-color: cyan;
+            transform: scale(1.15) translateY(-5px);
+            box-shadow: 0 30px 40px rgba(255,255,255,0.2);
+            border-color: white;
+            background: rgba(255,255,255,0.1);
         }
-
         .btn:hover::before {
             left: 100%;
         }
-
         .btn:active {
-            transform: perspective(500px) rotateX(-5deg) translateY(2px) scale(0.98);
-            box-shadow: 0 5px 15px rgba(255,0,255,0.7);
+            transform: scale(0.95) translateY(5px);
             transition: 0.1s;
         }
-
-        /* Индивидуальные цвета */
-        .btn-telegram { background: rgba(0, 100, 200, 0.7); }
-        .btn-github { background: rgba(50, 50, 50, 0.8); }
-        .btn-portfolio { background: rgba(150, 0, 255, 0.7); }
-
-        /* Анимации */
+        .telegram {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid white;
+        }
         @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-50px); }
-            to { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(-80px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(80px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-
-        /* Адаптация под телефон */
-        @media (max-width: 600px) {
-            .button-container {
-                gap: 15px;
-                flex-direction: column;
-                width: 100%;
-            }
-            .btn {
-                width: 100%;
-                padding: 14px 0;
-                font-size: 1rem;
-            }
-            h1 {
-                font-size: 2.5rem;
-            }
+        @keyframes fadeInScale {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
         }
-
-        /* Временное сообщение */
-        .portfolio-message {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
-            color: cyan;
-            padding: 12px 24px;
-            border-radius: 50px;
-            border: 1px solid cyan;
-            box-shadow: 0 0 20px cyan;
-            opacity: 0;
-            transition: opacity 0.3s;
+        @keyframes floatButtons {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        @media (max-width: 700px) {
+            .bio { font-size: 1rem; padding: 20px; margin: 20px; }
+            .button-group { flex-direction: column; gap: 15px; width: 100%; }
+            .btn { width: 100%; }
+            h1 { font-size: 3rem; }
+        }
+        .floating-object {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 20px white;
+            opacity: 0.6;
+            z-index: 5;
             pointer-events: none;
-            z-index: 20;
-            font-weight: 500;
-        }
-
-        .portfolio-message.show {
-            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <!-- 3D контейнер -->
     <div id="canvas-container"></div>
 
-    <!-- Временное сообщение для портфолио -->
-    <div class="portfolio-message" id="portfolioMessage">🚀 Портфолио скоро появится!</div>
+    <!-- летающие объекты (простые) -->
+    <div class="floating-object" style="top:10%; left:15%; animation:floatAround 18s infinite alternate;"></div>
+    <div class="floating-object" style="top:70%; left:80%; width:12px; height:12px; animation:floatAround 25s infinite alternate-reverse;"></div>
+    <div class="floating-object" style="top:40%; left:90%; width:6px; height:6px; animation:floatAround 20s infinite alternate;"></div>
+    <div class="floating-object" style="top:80%; left:10%; width:15px; height:15px; animation:floatAround 22s infinite alternate-reverse;"></div>
 
-    <!-- Контент -->
     <div class="content">
-        <h1>@Abrortg_com</h1>
-        <div class="subtitle">Python • n8n • Telegram Bots</div>
-        <div class="button-container">
-            <button class="btn btn-telegram" id="telegramBtn">Telegram</button>
-            <button class="btn btn-github" id="githubBtn">GitHub</button>
-            <button class="btn btn-portfolio" id="portfolioBtn">Портфолио</button>
+        <h1>АБРОР</h1>
+        <div class="sub">РАЗРАБОТЧИК · АВТОМАТИЗАЦИЯ · БУДУЩЕЕ</div>
+        <div class="bio">
+            Я создаю умные системы, которые работают за людей.<br>
+            Telegram‑боты, n8n, интеграции, контент‑фермы, AI‑решения.<br>
+            Мой код автоматизирует сложные процессы и приносит результат.<br>
+            Живу в мире, где технологии решают настоящие задачи.
+        </div>
+        <div class="button-group">
+            <button class="btn telegram" id="tgBtn">TELEGRAM</button>
+            <button class="btn" id="moreBtn">ПОРТФОЛИО</button>
         </div>
     </div>
 
-    <!-- Библиотеки -->
+    <div style="position:fixed; bottom:20px; right:20px; z-index:99; color:#aaa; font-size:0.8rem;">⚡ abrortg_com</div>
+
     <script type="importmap">
         {
             "imports": {
-                "three": "https://unpkg.com/three@0.126.0/build/three.module.js"
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
             }
         }
     </script>
 
-    <!-- 3D скрипт -->
     <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'https://unpkg.com/three@0.126.0/examples/jsm/controls/OrbitControls.js';
+        import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
 
-        // Сцена
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x050510);
+        scene.background = new THREE.Color(0x050505);
 
-        // Камера
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 2, 15);
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 1, 12);
 
-        // Рендерер
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.enabled = false;
+        renderer.setPixelRatio(window.devicePixelRatio);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
         // Свет
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-        dirLight.position.set(5, 10, 7);
-        dirLight.castShadow = true;
+        const ambient = new THREE.AmbientLight(0x404040);
+        scene.add(ambient);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight.position.set(5, 5, 5);
         scene.add(dirLight);
+        const backLight = new THREE.PointLight(0x555555, 0.8);
+        backLight.position.set(-3, -1, -5);
+        scene.add(backLight);
 
         // Луна
-        const moonGeometry = new THREE.SphereGeometry(2, 64, 64);
-        const moonMaterial = new THREE.MeshPhongMaterial({
+        const moonGeo = new THREE.SphereGeometry(2.2, 128, 128);
+        const moonMat = new THREE.MeshStandardMaterial({
             color: 0xcccccc,
-            emissive: 0x222233,
-            shininess: 30,
-            bumpMap: new THREE.TextureLoader().load('https://threejs.org/examples/textures/planets/moon_1024.jpg'),
-            bumpScale: 0.05
+            emissive: 0x111111,
+            roughness: 0.7,
+            metalness: 0.1
         });
-        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-        moon.position.set(-3, 1, -5);
-        moon.castShadow = true;
-        moon.receiveShadow = true;
+        const moon = new THREE.Mesh(moonGeo, moonMat);
+        moon.position.set(-2, 0.5, -6);
         scene.add(moon);
 
-        // Звёзды
-        const starsGeometry = new THREE.BufferGeometry();
-        const starsCount = 3000;
-        const starsPositions = new Float32Array(starsCount * 3);
+        // Звёзды мелкие
+        const starsGeo = new THREE.BufferGeometry();
+        const starsCount = 4000;
+        const starsPos = new Float32Array(starsCount * 3);
         for (let i = 0; i < starsCount * 3; i += 3) {
-            starsPositions[i] = (Math.random() - 0.5) * 200;
-            starsPositions[i+1] = (Math.random() - 0.5) * 200;
-            starsPositions[i+2] = (Math.random() - 0.5) * 200;
+            starsPos[i] = (Math.random() - 0.5) * 200;
+            starsPos[i+1] = (Math.random() - 0.5) * 200;
+            starsPos[i+2] = (Math.random() - 0.5) * 200 - 30;
         }
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(starsPositions, 3));
-        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+        const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15 });
+        const stars = new THREE.Points(starsGeo, starsMat);
         scene.add(stars);
 
-        // Планеты вдалеке
-        const planetGeo = new THREE.SphereGeometry(0.5, 32);
-        const planetMat = new THREE.MeshPhongMaterial({ color: 0x88aaff, emissive: 0x113366 });
-        const planet1 = new THREE.Mesh(planetGeo, planetMat);
-        planet1.position.set(5, -1, -12);
-        scene.add(planet1);
+        // Летающие объекты (3D)
+        const floaters = [];
+        for (let i = 0; i < 50; i++) {
+            const size = Math.random() * 0.4 + 0.1;
+            const geo = new THREE.IcosahedronGeometry(size, 0);
+            const mat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, emissive: 0x222222 });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15 - 5
+            );
+            scene.add(mesh);
+            floaters.push({ mesh, speed: Math.random() * 0.01 + 0.005, offset: Math.random() * 10 });
+        }
 
-        const planetMat2 = new THREE.MeshPhongMaterial({ color: 0xffaa88, emissive: 0x442211 });
-        const planet2 = new THREE.Mesh(planetGeo, planetMat2);
-        planet2.position.set(-6, -2, -15);
-        scene.add(planet2);
+        // Кольца / тор (декор)
+        const ringGeo = new THREE.TorusGeometry(3, 0.05, 16, 100);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0x888888, emissive: 0x222222, wireframe: true });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.set(1, -0.5, -9);
+        ring.rotation.x = Math.PI / 3;
+        ring.rotation.y = 0.5;
+        scene.add(ring);
 
-        // Анимация
+        // Вторая малая луна
+        const miniMoonGeo = new THREE.SphereGeometry(0.6, 32);
+        const miniMoonMat = new THREE.MeshStandardMaterial({ color: 0x999999, emissive: 0x111111 });
+        const miniMoon = new THREE.Mesh(miniMoonGeo, miniMoonMat);
+        miniMoon.position.set(4, -1, -10);
+        scene.add(miniMoon);
+
+        let time = 0;
         function animate() {
             requestAnimationFrame(animate);
 
+            time += 0.005;
+
             // Вращение луны
-            moon.rotation.y += 0.001;
-            moon.rotation.x += 0.0005;
+            moon.rotation.y += 0.002;
+            miniMoon.rotation.y += 0.003;
+            ring.rotation.y += 0.001;
 
-            // Вращение звёзд
-            stars.rotation.y += 0.0002;
+            // Движение звезд
+            stars.rotation.y += 0.0001;
 
-            // Планеты вращаются
-            planet1.rotation.y += 0.002;
-            planet2.rotation.y -= 0.0015;
+            // Летающие объекты плавают
+            floaters.forEach((f, idx) => {
+                f.mesh.position.y += Math.sin(time + f.offset) * 0.008;
+                f.mesh.position.x += Math.cos(time + f.offset) * 0.008;
+                f.mesh.rotation.x += 0.01;
+                f.mesh.rotation.y += 0.02;
+            });
+
+            camera.position.x = Math.sin(time * 0.2) * 1.2;
+            camera.position.y = 1 + Math.cos(time * 0.3) * 0.4;
+            camera.lookAt(0, 0.5, -3);
 
             renderer.render(scene, camera);
         }
+
         animate();
 
-        // Ресайз
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // Легкое движение камеры за мышкой
-        document.addEventListener('mousemove', (e) => {
-            const mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-            const mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-            camera.position.x += (mouseX * 2 - camera.position.x) * 0.02;
-            camera.position.y += (-mouseY * 2 - camera.position.y) * 0.02;
-            camera.lookAt(0, 1, -3);
-        });
     </script>
 
-    <!-- Логика кнопок -->
     <script>
-        const tgBtn = document.getElementById('telegramBtn');
-        const ghBtn = document.getElementById('githubBtn');
-        const pfBtn = document.getElementById('portfolioBtn');
-        const msg = document.getElementById('portfolioMessage');
-
-        tgBtn.addEventListener('click', () => {
+        document.getElementById('tgBtn').addEventListener('click', () => {
             window.open('https://t.me/Abrortg_com', '_blank');
         });
-
-        ghBtn.addEventListener('click', () => {
-            window.open('https://github.com/abroryt9-cloud', '_blank');
-        });
-
-        pfBtn.addEventListener('click', () => {
-            msg.classList.add('show');
-            setTimeout(() => msg.classList.remove('show'), 2000);
+        document.getElementById('moreBtn').addEventListener('click', () => {
+            alert('Портфолио в разработке — следи за обновлениями.');
         });
     </script>
 </body>
