@@ -323,5 +323,177 @@
             alert('Портфолио в разработке — следи за обновлениями.');
         });
     </script>
-</body>
+</body><!-- ПОРТФОЛИО ПАНЕЛЬ (выезжает снизу) -->
+<div class="portfolio-panel" id="portfolioPanel">
+    <div class="portfolio-header">
+        <span>📁 ПРОЕКТЫ</span>
+        <button class="close-panel" id="closePanel">✕</button>
+    </div>
+    <div class="portfolio-grid">
+        <div class="project-card">
+            <h3>Контент‑ферма</h3>
+            <p>Автоматический постинг видео в TikTok, YouTube, Telegram.</p>
+            <a href="#" target="_blank" class="project-link">📎 GitHub</a>
+        </div>
+        <div class="project-card">
+            <h3>n8n‑оркестратор</h3>
+            <p>Тестовое задание с архитектурой оркестратор + воркер.</p>
+            <a href="#" target="_blank" class="project-link">📎 GitHub</a>
+        </div>
+        <div class="project-card">
+            <h3>Знайка (AI‑репетитор)</h3>
+            <p>Веб‑приложение на Flask + GigaChat, авторизация, чаты.</p>
+            <a href="#" target="_blank" class="project-link">🌐 Демо</a>
+        </div>
+        <div class="project-card">
+            <h3>Прокси‑бот</h3>
+            <p>Telegram‑бот для мониторинга прокси с уведомлениями.</p>
+            <a href="#" target="_blank" class="project-link">📎 GitHub</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .portfolio-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(10,10,10,0.95);
+        backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255,255,255,0.3);
+        box-shadow: 0 -20px 40px rgba(0,0,0,0.8);
+        color: white;
+        z-index: 100;
+        padding: 30px 20px;
+        transform: translateY(100%);
+        transition: transform 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        border-radius: 40px 40px 0 0;
+    }
+
+    .portfolio-panel.show {
+        transform: translateY(0);
+    }
+
+    .portfolio-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto 30px;
+        font-size: 1.8rem;
+        font-weight: 600;
+        letter-spacing: 3px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+        padding-bottom: 15px;
+    }
+
+    .close-panel {
+        background: transparent;
+        border: 1px solid white;
+        color: white;
+        font-size: 1.8rem;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-panel:hover {
+        background: white;
+        color: black;
+        transform: rotate(90deg);
+    }
+
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .project-card {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 30px;
+        padding: 25px 20px;
+        backdrop-filter: blur(5px);
+        transition: 0.3s;
+        box-shadow: 0 15px 25px -10px black;
+    }
+
+    .project-card:hover {
+        transform: translateY(-10px);
+        border-color: white;
+        box-shadow: 0 30px 40px -10px rgba(255,255,255,0.2);
+    }
+
+    .project-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+        border-left: 4px solid white;
+        padding-left: 15px;
+    }
+
+    .project-card p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        opacity: 0.8;
+        margin-bottom: 20px;
+    }
+
+    .project-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background: transparent;
+        border: 1px solid white;
+        color: white;
+        text-decoration: none;
+        border-radius: 40px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        transition: 0.3s;
+    }
+
+    .project-link:hover {
+        background: white;
+        color: black;
+    }
+
+    @media (max-width: 700px) {
+        .portfolio-header {
+            font-size: 1.4rem;
+        }
+        .project-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<script>
+    const portfolioBtn = document.getElementById('moreBtn');
+    const panel = document.getElementById('portfolioPanel');
+    const closeBtn = document.getElementById('closePanel');
+
+    portfolioBtn.addEventListener('click', () => {
+        panel.classList.add('show');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        panel.classList.remove('show');
+    });
+
+    // Закрыть по клику вне панели (но внутри окна)
+    window.addEventListener('click', (e) => {
+        if (!panel.contains(e.target) && !portfolioBtn.contains(e.target)) {
+            panel.classList.remove('show');
+        }
+    });
+</script>
 </html>
