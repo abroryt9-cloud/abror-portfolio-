@@ -152,7 +152,6 @@
             100% { transform: translateY(-10px); }
         }
 
-        /* ===== ПОРТФОЛИО ПАНЕЛЬ ===== */
         .portfolio-panel {
             position: fixed;
             bottom: 0;
@@ -262,7 +261,6 @@
             color: black;
         }
 
-        /* ===== ЛЕТАЮЩИЕ ЗВЁЗДОЧКИ ===== */
         .floating-star {
             position: fixed;
             width: 8px;
@@ -330,7 +328,6 @@
 </head>
 <body>
     <div id="canvas-container"></div>
-
     <div id="stars-container"></div>
 
     <audio id="bgMusic" loop>
@@ -533,10 +530,8 @@
             for (let s of starElements) {
                 s.x += s.speedX;
                 s.y += s.speedY;
-
                 if (s.x < 0 || s.x > 100) s.speedX *= -1;
                 if (s.y < 0 || s.y > 100) s.speedY *= -1;
-
                 s.element.style.left = s.x + '%';
                 s.element.style.top = s.y + '%';
             }
@@ -552,6 +547,10 @@
             const panel = document.getElementById('portfolioPanel');
             const closeBtn = document.getElementById('closePanel');
             const clickSound = document.getElementById('clickSound');
+            const music = document.getElementById('bgMusic');
+            const musicBtn = document.getElementById('musicToggle');
+
+            let hasUserInteracted = false;
 
             function playClick() {
                 if (clickSound) {
@@ -560,10 +559,16 @@
                 }
             }
 
-            const music = document.getElementById('bgMusic');
-            const musicBtn = document.getElementById('musicToggle');
+            function startMusicOnce() {
+                if (!hasUserInteracted && music) {
+                    hasUserInteracted = true;
+                    music.play().catch(e => console.log('auto music play blocked'));
+                    musicBtn.textContent = '🔊';
+                }
+            }
 
             musicBtn.addEventListener('click', () => {
+                startMusicOnce();
                 if (music.paused) {
                     music.play();
                     musicBtn.textContent = '🔊';
@@ -573,9 +578,14 @@
                 }
             });
 
+            function handleUserInteraction() {
+                startMusicOnce();
+                playClick();
+            }
+
             if (tgBtn) {
                 tgBtn.addEventListener('click', (e) => {
-                    playClick();
+                    handleUserInteraction();
                     window.open('https://t.me/Abrortg_com', '_blank');
                 });
             }
@@ -583,12 +593,12 @@
             if (moreBtn && panel && closeBtn) {
                 moreBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    playClick();
+                    handleUserInteraction();
                     panel.classList.add('show');
                 });
 
                 closeBtn.addEventListener('click', () => {
-                    playClick();
+                    handleUserInteraction();
                     panel.classList.remove('show');
                 });
 
@@ -600,6 +610,14 @@
 
                 panel.addEventListener('click', (e) => e.stopPropagation());
             }
+
+            document.addEventListener('click', () => {
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    music.play().catch(() => {});
+                    musicBtn.textContent = '🔊';
+                }
+            }, { once: true });
         })();
     </script>
 </body>
